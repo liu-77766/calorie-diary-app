@@ -6,6 +6,63 @@ function parseDataUrl(image) {
   return { mimeType: match[1], data: match[2] };
 }
 
+function parseJsonText(text) {
+  const trimmed = String(text || "").trim();
+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  return JSON.parse(fenced ? fenced[1] : trimmed);
+}
+
+async function estimateCaloriesWithDeepSeek(foodName) {
+  if (!process.env.DEEPSEEK_API_KEY || !foodName || foodName === "图像主体") return null;
+
+  const response = await fetch("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
+      messages: [
+        {
+          role: "user",
+          content: [
+            `请估算食物“${foodName}”常见可食部分每100克热量。`,
+            "只返回 JSON，不要返回 Markdown。",
+            'JSON 字段必须是：{"kcalPer100":0,"note":"简短说明这是估算值，必要时提醒按包装或实际重量调整"}',
+          ].join("\n"),
+        },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.2,
+    }),
+  });
+
+  const body = await response.json();
+  if (!response.ok) return null;
+
+  try {
+    const parsed = parseJsonText(body.choices?.[0]?.message?.content);
+    return {
+      kcalPer100: Number(parsed.kcalPer100) || 0,
+      note: parsed.note || "DeepSeek 估算热量，请按实际情况调整。",
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function enrichCaloriesWithDeepSeek(result) {
+  const estimate = await estimateCaloriesWithDeepSeek(result.foodName);
+  if (!estimate?.kcalPer100) return result;
+
+  return {
+    ...result,
+    kcalPer100: estimate.kcalPer100,
+    note: `${estimate.note}（食物名称来自百度识别，热量由 DeepSeek 估算）`,
+  };
+}
+
 async function getBaiduAccessToken() {
   const apiKey = process.env.BAIDU_API_KEY;
   const secretKey = process.env.BAIDU_SECRET_KEY;
@@ -142,7 +199,8 @@ async function recognizeWithBaidu(image) {
     return { status: response.status, body: { error: body.error_msg || "百度图像组合识别服务暂时不可用" } };
   }
 
-  return { status: 200, body: normalizeBaiduCombinationResult(body) };
+  const result = normalizeBaiduCombinationResult(body);
+  return { status: 200, body: await enrichCaloriesWithDeepSeek(result) };
 }
 
 module.exports = async function handler(req, res) {

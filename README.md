@@ -30,3 +30,10 @@
 - `BAIDU_SECRET_KEY=你的百度 Secret Key`
 
 百度菜品识别会返回菜品名称、置信度和参考卡路里。这个接口只适合“拍照识别”，不支持按食物名直接查询热量；食物名查询仍需使用内置库、手动输入，或改用 Gemini/OpenAI。
+
+当前项目也支持用 DeepSeek 专门做热量估算：
+
+- `DEEPSEEK_API_KEY=你的 DeepSeek API Key`
+- `DEEPSEEK_MODEL=deepseek-v4-flash`
+
+启用后，输入内置库没有的食物名会调用 DeepSeek 估算热量；百度拍照识别出食物名称后，也会用 DeepSeek 估算/校准每 100g 热量。

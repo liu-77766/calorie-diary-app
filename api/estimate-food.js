@@ -64,6 +64,38 @@ async function estimateWithGemini(name) {
   return { status: 200, body: parseJsonText(readGeminiText(body)) };
 }
 
+async function estimateWithDeepSeek(name) {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    return { status: 503, body: { error: "热量查询还没有配置 DEEPSEEK_API_KEY。可以先用内置食物或手动输入热量。" } };
+  }
+
+  const response = await fetch("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
+      messages: [
+        {
+          role: "user",
+          content: foodEstimatePrompt(name),
+        },
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.2,
+    }),
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    return { status: response.status, body: { error: body.error?.message || "DeepSeek 热量查询暂时不可用" } };
+  }
+
+  return { status: 200, body: parseJsonText(body.choices?.[0]?.message?.content) };
+}
+
 async function estimateWithOpenAI(name) {
   if (!process.env.OPENAI_API_KEY) {
     return { status: 503, body: { error: "热量查询还没有配置 OPENAI_API_KEY。可以先用内置食物或手动输入热量。" } };
@@ -141,9 +173,13 @@ module.exports = async function handler(req, res) {
 
   try {
     const provider = providerName();
+    if (process.env.DEEPSEEK_API_KEY) {
+      const result = await estimateWithDeepSeek(name);
+      return res.status(result.status).json(result.body);
+    }
     if (provider === "baidu") {
       return res.status(501).json({
-        error: "百度菜品识别只支持拍照识别，不能按食物名查询热量。请使用内置食物或手动输入。",
+        error: "百度菜品识别只支持拍照识别，不能按食物名查询热量。请配置 DEEPSEEK_API_KEY 后再查询。",
       });
     }
     const result = provider === "gemini" ? await estimateWithGemini(name) : await estimateWithOpenAI(name);
