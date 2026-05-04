@@ -480,14 +480,32 @@ label {
   gap: 10px;
 }
 
-.visually-hidden {
+.file-action {
+  display: grid;
+  min-height: 46px;
+  place-items: center;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.file-action input {
   position: absolute;
   width: 1px;
   height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  clip-path: inset(50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.secondary-action {
+  background: var(--ink);
+  color: white;
+  box-shadow: var(--shadow-soft);
+}
+
+.ghost-action {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
 }
 
 .photo-status {

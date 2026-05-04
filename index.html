@@ -116,10 +116,14 @@
 
               <div id="photo-fields" class="mode-fields hidden">
                 <div class="photo-actions" aria-label="照片来源">
-                  <button id="take-photo-button" class="secondary-button" type="button">拍照</button>
-                  <button id="pick-photo-button" class="ghost-button" type="button">从相册选择</button>
-                  <input id="photo-camera-file" class="visually-hidden" type="file" accept="image/*" capture="environment" />
-                  <input id="photo-file" class="visually-hidden" type="file" accept="image/*" />
+                  <label class="file-action secondary-action">
+                    拍照
+                    <input id="photo-camera-file" type="file" accept="image/*" capture="environment" />
+                  </label>
+                  <label class="file-action ghost-action">
+                    从相册选择
+                    <input id="photo-file" type="file" accept="image/*" />
+                  </label>
                 </div>
                 <img id="photo-preview" class="photo-preview hidden" alt="餐食照片预览" />
                 <button id="identify-photo" class="secondary-button" type="button">识别照片</button>
