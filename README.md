@@ -36,4 +36,4 @@
 - `DEEPSEEK_API_KEY=你的 DeepSeek API Key`
 - `DEEPSEEK_MODEL=deepseek-v4-flash`
 
-启用后，输入内置库没有的食物名会调用 DeepSeek 估算热量；百度拍照识别出食物名称后，也会用 DeepSeek 估算/校准每 100g 热量。
+启用后，输入内置库没有的食物名会调用 DeepSeek 估算热量；百度拍照识别出食物名称后，也会用 DeepSeek 估算/校准常见可食克数和每 100g 热量。

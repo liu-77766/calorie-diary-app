@@ -27,9 +27,11 @@ async function estimateCaloriesWithDeepSeek(foodName) {
         {
           role: "user",
           content: [
-            `请估算食物“${foodName}”常见可食部分每100克热量。`,
+            `请估算食物“${foodName}”的常见可食部分每100克热量，以及常见单份可食重量克数。`,
+            "如果通常按个吃，请给常见单个可食重量；如果通常按份吃，请给一份的常见可食重量。",
+            "这只是常见估算，不要夸大准确性。",
             "只返回 JSON，不要返回 Markdown。",
-            'JSON 字段必须是：{"kcalPer100":0,"note":"简短说明这是估算值，必要时提醒按包装或实际重量调整"}',
+            'JSON 字段必须是：{"kcalPer100":0,"estimatedGrams":0,"note":"简短说明这是估算值，必要时提醒按包装或实际重量调整"}',
           ].join("\n"),
         },
       ],
@@ -45,6 +47,7 @@ async function estimateCaloriesWithDeepSeek(foodName) {
     const parsed = parseJsonText(body.choices?.[0]?.message?.content);
     return {
       kcalPer100: Number(parsed.kcalPer100) || 0,
+      estimatedGrams: Number(parsed.estimatedGrams) || 0,
       note: parsed.note || "DeepSeek 估算热量，请按实际情况调整。",
     };
   } catch {
@@ -59,7 +62,8 @@ async function enrichCaloriesWithDeepSeek(result) {
   return {
     ...result,
     kcalPer100: estimate.kcalPer100,
-    note: `${estimate.note}（食物名称来自百度识别，热量由 DeepSeek 估算）`,
+    estimatedGrams: estimate.estimatedGrams || result.estimatedGrams,
+    note: `${estimate.note}（食物名称来自百度识别，克数和热量由 DeepSeek 估算）`,
   };
 }
 
