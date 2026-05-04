@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="热量日记" />
+    <title>热量日记</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <span class="app-mark" aria-hidden="true">kcal</span>
+          <div>
+            <p class="eyebrow">每日记录</p>
+            <h1>热量日记</h1>
+          </div>
+        </div>
+        <input id="log-date" class="date-input" type="date" aria-label="日期" />
+      </header>
+
+      <section class="summary-panel" aria-label="全天热量汇总">
+        <div class="summary-copy">
+          <p id="summary-date-label" class="eyebrow">今日摄入</p>
+          <div class="summary-total">
+            <span id="daily-kcal">0</span>
+            <small>kcal</small>
+          </div>
+        </div>
+        <div class="summary-grid">
+          <div>
+            <span id="breakfast-kcal">0</span>
+            <small>早餐</small>
+          </div>
+          <div>
+            <span id="lunch-kcal">0</span>
+            <small>午餐</small>
+          </div>
+          <div>
+            <span id="dinner-kcal">0</span>
+            <small>晚餐</small>
+          </div>
+          <div>
+            <span id="snack-kcal">0</span>
+            <small>加餐</small>
+          </div>
+        </div>
+      </section>
+
+      <div class="page-stack">
+        <section class="page-view active" data-page="record" aria-label="添加记录">
+          <section class="entry-panel">
+            <div class="tabs" role="tablist" aria-label="录入方式">
+              <button class="tab active" type="button" data-mode="food">食物</button>
+              <button class="tab" type="button" data-mode="kj">包装 kJ</button>
+              <button class="tab" type="button" data-mode="photo">拍照</button>
+            </div>
+
+            <form id="entry-form" class="entry-form">
+              <label>
+                餐次
+                <select id="meal-select">
+                  <option value="breakfast">早餐</option>
+                  <option value="lunch">午餐</option>
+                  <option value="dinner">晚餐</option>
+                  <option value="snack">加餐</option>
+                </select>
+              </label>
+
+              <div id="food-fields" class="mode-fields">
+                <label>
+                  食物
+                  <input id="food-name" list="food-options" placeholder="牛奶、鸡蛋、米饭" autocomplete="off" />
+                  <datalist id="food-options"></datalist>
+                </label>
+                <div class="lookup-row">
+                  <button id="estimate-food" class="secondary-button compact-button" type="button">查询热量</button>
+                  <p id="estimate-status" class="lookup-status">内置没有的食物，可以让 AI 估算常见热量。</p>
+                </div>
+                <div class="two-col">
+                  <label>
+                    份量
+                    <input id="food-amount" type="number" inputmode="decimal" min="0" step="0.1" placeholder="250" />
+                  </label>
+                  <label>
+                    单位
+                    <select id="food-unit">
+                      <option value="g">克</option>
+                      <option value="ml">毫升</option>
+                      <option value="piece">个</option>
+                    </select>
+                  </label>
+                </div>
+                <label>
+                  热量密度
+                  <input id="density" type="number" inputmode="decimal" min="0" step="0.1" placeholder="kcal/100g，或 kcal/个" />
+                </label>
+              </div>
+
+              <div id="kj-fields" class="mode-fields hidden">
+                <label>
+                  名称
+                  <input id="kj-name" placeholder="薯片、巧克力、饮料" autocomplete="off" />
+                </label>
+                <label>
+                  包装标注能量
+                  <input id="kj-value" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例如 840" />
+                </label>
+              </div>
+
+              <div id="photo-fields" class="mode-fields hidden">
+                <label>
+                  拍照或选择照片
+                  <input id="photo-file" type="file" accept="image/*" />
+                </label>
+                <img id="photo-preview" class="photo-preview hidden" alt="餐食照片预览" />
+                <button id="identify-photo" class="secondary-button" type="button">识别照片</button>
+                <p id="photo-status" class="photo-status">识别会把照片发送到 AI 接口，结果只是估算，请按实际情况修改。</p>
+                <label>
+                  识别食物
+                  <input id="photo-food-name" list="food-options" placeholder="识别后自动填写，也可手动修改" autocomplete="off" />
+                </label>
+                <div class="two-col">
+                  <label>
+                    估计重量
+                    <input id="photo-grams" type="number" inputmode="decimal" min="0" step="1" placeholder="例如 180" />
+                  </label>
+                  <label>
+                    单位
+                    <select disabled>
+                      <option>克</option>
+                    </select>
+                  </label>
+                </div>
+                <label>
+                  热量密度
+                  <input id="photo-density" type="number" inputmode="decimal" min="0" step="0.1" placeholder="kcal/100g" />
+                </label>
+                <label>
+                  备注
+                  <input id="photo-note" placeholder="例如：估算约 1 个鸡腿" />
+                </label>
+              </div>
+
+              <div class="preview-row">
+                <span>本次预计</span>
+                <strong><span id="preview-kcal">0</span> kcal</strong>
+              </div>
+
+              <button class="primary-button" type="submit">添加记录</button>
+            </form>
+          </section>
+        </section>
+
+        <section class="page-view" data-page="quick" aria-label="常用食物">
+          <section class="quick-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">快速选择</p>
+                <h2>常用食物</h2>
+              </div>
+              <button id="clear-day" class="ghost-button" type="button">清空当天</button>
+            </div>
+            <div id="quick-foods" class="quick-list"></div>
+          </section>
+        </section>
+
+        <section class="page-view" data-page="details" aria-label="餐次明细">
+          <section class="meal-list">
+            <article class="meal-card" data-meal-card="breakfast">
+              <div class="meal-heading">
+                <h2>早餐</h2>
+                <span><b data-meal-total="breakfast">0</b> kcal</span>
+              </div>
+              <ul data-meal-list="breakfast"></ul>
+            </article>
+            <article class="meal-card" data-meal-card="lunch">
+              <div class="meal-heading">
+                <h2>午餐</h2>
+                <span><b data-meal-total="lunch">0</b> kcal</span>
+              </div>
+              <ul data-meal-list="lunch"></ul>
+            </article>
+            <article class="meal-card" data-meal-card="dinner">
+              <div class="meal-heading">
+                <h2>晚餐</h2>
+                <span><b data-meal-total="dinner">0</b> kcal</span>
+              </div>
+              <ul data-meal-list="dinner"></ul>
+            </article>
+            <article class="meal-card" data-meal-card="snack">
+              <div class="meal-heading">
+                <h2>加餐</h2>
+                <span><b data-meal-total="snack">0</b> kcal</span>
+              </div>
+              <ul data-meal-list="snack"></ul>
+            </article>
+          </section>
+        </section>
+
+        <section class="page-view" data-page="history" aria-label="历史记录">
+          <section class="history-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">历史汇总</p>
+                <h2>以前吃了多少</h2>
+              </div>
+            </div>
+            <div id="history-list" class="history-list"></div>
+          </section>
+        </section>
+      </div>
+
+      <nav class="bottom-nav" aria-label="页面切换">
+        <button class="page-tab active" type="button" data-target-page="record">记录</button>
+        <button class="page-tab" type="button" data-target-page="quick">常用</button>
+        <button class="page-tab" type="button" data-target-page="details">明细</button>
+        <button class="page-tab" type="button" data-target-page="history">历史</button>
+      </nav>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
