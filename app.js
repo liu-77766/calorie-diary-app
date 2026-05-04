@@ -76,6 +76,9 @@ const elements = {
   kjName: document.querySelector("#kj-name"),
   kjValue: document.querySelector("#kj-value"),
   photoFile: document.querySelector("#photo-file"),
+  photoCameraFile: document.querySelector("#photo-camera-file"),
+  takePhotoButton: document.querySelector("#take-photo-button"),
+  pickPhotoButton: document.querySelector("#pick-photo-button"),
   photoPreview: document.querySelector("#photo-preview"),
   photoStatus: document.querySelector("#photo-status"),
   identifyPhoto: document.querySelector("#identify-photo"),
@@ -497,7 +500,7 @@ function resizePhoto(file) {
 }
 
 async function handlePhotoSelected() {
-  const file = elements.photoFile.files?.[0];
+  const file = elements.photoFile.files?.[0] || elements.photoCameraFile.files?.[0];
   if (!file) return;
 
   try {
@@ -619,6 +622,15 @@ function bindEvents() {
     input.addEventListener("input", updatePreview);
   });
   elements.photoFile.addEventListener("change", handlePhotoSelected);
+  elements.photoCameraFile.addEventListener("change", handlePhotoSelected);
+  elements.takePhotoButton.addEventListener("click", () => {
+    elements.photoCameraFile.value = "";
+    elements.photoCameraFile.click();
+  });
+  elements.pickPhotoButton.addEventListener("click", () => {
+    elements.photoFile.value = "";
+    elements.photoFile.click();
+  });
   elements.identifyPhoto.addEventListener("click", identifyPhoto);
   elements.estimateFood.addEventListener("click", estimateFoodByName);
 

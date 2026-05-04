@@ -115,10 +115,12 @@
               </div>
 
               <div id="photo-fields" class="mode-fields hidden">
-                <label>
-                  拍照或选择照片
-                  <input id="photo-file" type="file" accept="image/*" />
-                </label>
+                <div class="photo-actions" aria-label="照片来源">
+                  <button id="take-photo-button" class="secondary-button" type="button">拍照</button>
+                  <button id="pick-photo-button" class="ghost-button" type="button">从相册选择</button>
+                  <input id="photo-camera-file" class="visually-hidden" type="file" accept="image/*" capture="environment" />
+                  <input id="photo-file" class="visually-hidden" type="file" accept="image/*" />
+                </div>
                 <img id="photo-preview" class="photo-preview hidden" alt="餐食照片预览" />
                 <button id="identify-photo" class="secondary-button" type="button">识别照片</button>
                 <p id="photo-status" class="photo-status">识别会把照片发送到 AI 接口，结果只是估算，请按实际情况修改。</p>
