@@ -614,6 +614,9 @@ ul {
   margin-top: 3px;
   color: var(--muted);
   font-size: 13px;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .food-kcal {
