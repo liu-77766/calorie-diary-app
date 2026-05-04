@@ -117,10 +117,6 @@
               <div id="photo-fields" class="mode-fields hidden">
                 <div class="photo-actions" aria-label="照片来源">
                   <label class="file-action secondary-action">
-                    拍照
-                    <input id="photo-camera-file" type="file" accept="image/*" capture="environment" />
-                  </label>
-                  <label class="file-action ghost-action">
                     从相册选择
                     <input id="photo-file" type="file" accept="image/*" />
                   </label>
@@ -160,6 +156,7 @@
               </div>
 
               <button class="primary-button" type="submit">添加记录</button>
+              <button id="clear-day" class="ghost-button full-button" type="button">清空当天</button>
             </form>
           </section>
         </section>
@@ -171,7 +168,6 @@
                 <p class="eyebrow">快速选择</p>
                 <h2>常用食物</h2>
               </div>
-              <button id="clear-day" class="ghost-button" type="button">清空当天</button>
             </div>
             <div id="quick-foods" class="quick-list"></div>
           </section>
@@ -182,28 +178,40 @@
             <article class="meal-card" data-meal-card="breakfast">
               <div class="meal-heading">
                 <h2>早餐</h2>
-                <span><b data-meal-total="breakfast">0</b> kcal</span>
+                <div class="meal-heading-actions">
+                  <span><b data-meal-total="breakfast">0</b> kcal</span>
+                  <button class="meal-clear-button" type="button" data-clear-meal="breakfast">清空本餐</button>
+                </div>
               </div>
               <ul data-meal-list="breakfast"></ul>
             </article>
             <article class="meal-card" data-meal-card="lunch">
               <div class="meal-heading">
                 <h2>午餐</h2>
-                <span><b data-meal-total="lunch">0</b> kcal</span>
+                <div class="meal-heading-actions">
+                  <span><b data-meal-total="lunch">0</b> kcal</span>
+                  <button class="meal-clear-button" type="button" data-clear-meal="lunch">清空本餐</button>
+                </div>
               </div>
               <ul data-meal-list="lunch"></ul>
             </article>
             <article class="meal-card" data-meal-card="dinner">
               <div class="meal-heading">
                 <h2>晚餐</h2>
-                <span><b data-meal-total="dinner">0</b> kcal</span>
+                <div class="meal-heading-actions">
+                  <span><b data-meal-total="dinner">0</b> kcal</span>
+                  <button class="meal-clear-button" type="button" data-clear-meal="dinner">清空本餐</button>
+                </div>
               </div>
               <ul data-meal-list="dinner"></ul>
             </article>
             <article class="meal-card" data-meal-card="snack">
               <div class="meal-heading">
                 <h2>加餐</h2>
-                <span><b data-meal-total="snack">0</b> kcal</span>
+                <div class="meal-heading-actions">
+                  <span><b data-meal-total="snack">0</b> kcal</span>
+                  <button class="meal-clear-button" type="button" data-clear-meal="snack">清空本餐</button>
+                </div>
               </div>
               <ul data-meal-list="snack"></ul>
             </article>

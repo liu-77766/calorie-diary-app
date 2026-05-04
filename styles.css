@@ -356,7 +356,8 @@ label {
 .secondary-button,
 .ghost-button,
 .quick-chip,
-.delete-button {
+.delete-button,
+.meal-clear-button {
   border-radius: 8px;
   border: 0;
   font-weight: 850;
@@ -394,6 +395,11 @@ label {
   padding: 0 12px;
   background: var(--accent-soft);
   color: var(--accent-dark);
+}
+
+.full-button {
+  width: 100%;
+  min-height: 46px;
 }
 
 .section-title {
@@ -476,7 +482,7 @@ label {
 
 .photo-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 
@@ -538,6 +544,13 @@ label {
   border-bottom: 1px solid var(--line);
 }
 
+.meal-heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
 .meal-heading span {
   color: var(--muted);
   font-size: 13px;
@@ -545,6 +558,14 @@ label {
 
 .meal-heading b {
   color: var(--ink);
+}
+
+.meal-clear-button {
+  min-height: 32px;
+  padding: 0 10px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 12px;
 }
 
 ul {

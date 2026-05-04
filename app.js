@@ -9,33 +9,41 @@ const mealNames = {
 };
 
 const foodLibrary = [
-  { name: "牛奶", unit: "ml", kcalPer100: 64, category: "早餐/蛋白" },
+  { name: "牛奶", unit: "ml", kcalPer100: 64, category: "早餐/饮品" },
+  { name: "无糖豆浆", unit: "ml", kcalPer100: 31, category: "早餐/饮品" },
   { name: "鸡蛋", unit: "piece", kcalPerPiece: 70, defaultAmount: 1, category: "早餐/蛋白" },
   { name: "酸奶", unit: "g", kcalPer100: 72, category: "早餐/蛋白" },
-  { name: "豆腐", unit: "g", kcalPer100: 76, category: "早餐/蛋白" },
-  { name: "鸡胸肉", unit: "g", kcalPer100: 165, category: "早餐/蛋白" },
-  { name: "鸡腿", unit: "piece", kcalPerPiece: 260, defaultAmount: 1, category: "早餐/蛋白" },
-  { name: "鸭腿", unit: "piece", kcalPerPiece: 330, defaultAmount: 1, category: "早餐/蛋白" },
-  { name: "牛肉", unit: "g", kcalPer100: 250, category: "早餐/蛋白" },
-  { name: "米饭", unit: "g", kcalPer100: 116, category: "主食" },
-  { name: "面条", unit: "g", kcalPer100: 137, category: "主食" },
-  { name: "全麦面包", unit: "g", kcalPer100: 247, category: "主食" },
-  { name: "燕麦", unit: "g", kcalPer100: 379, category: "主食" },
-  { name: "土豆", unit: "g", kcalPer100: 77, category: "粗粮/薯类" },
-  { name: "红薯", unit: "g", kcalPer100: 86, category: "粗粮/薯类" },
-  { name: "紫薯", unit: "g", kcalPer100: 82, category: "粗粮/薯类" },
-  { name: "玉米", unit: "piece", kcalPerPiece: 175, defaultAmount: 1, category: "粗粮/薯类" },
-  { name: "南瓜", unit: "g", kcalPer100: 23, category: "粗粮/薯类" },
-  { name: "西红柿", unit: "g", kcalPer100: 18, category: "蔬菜" },
-  { name: "四季豆", unit: "g", kcalPer100: 20, category: "蔬菜" },
-  { name: "菠菜", unit: "g", kcalPer100: 23, category: "蔬菜" },
-  { name: "豆芽", unit: "g", kcalPer100: 30, category: "蔬菜" },
-  { name: "黄瓜", unit: "g", kcalPer100: 16, category: "蔬菜" },
-  { name: "生菜", unit: "g", kcalPer100: 15, category: "蔬菜" },
-  { name: "西兰花", unit: "g", kcalPer100: 34, category: "蔬菜" },
-  { name: "胡萝卜", unit: "g", kcalPer100: 41, category: "蔬菜" },
-  { name: "白菜", unit: "g", kcalPer100: 17, category: "蔬菜" },
-  { name: "冬瓜", unit: "g", kcalPer100: 10, category: "蔬菜" },
+  { name: "希腊酸奶", unit: "g", kcalPer100: 59, category: "早餐/蛋白" },
+  { name: "低脂奶酪", unit: "g", kcalPer100: 98, category: "早餐/蛋白" },
+  { name: "豆腐", unit: "g", kcalPer100: 76, category: "优质蛋白" },
+  { name: "虾仁", unit: "g", kcalPer100: 99, category: "优质蛋白" },
+  { name: "鱼肉", unit: "g", kcalPer100: 120, category: "优质蛋白" },
+  { name: "鸡胸肉", unit: "g", kcalPer100: 165, category: "优质蛋白" },
+  { name: "鸡腿", unit: "piece", kcalPerPiece: 260, defaultAmount: 1, category: "优质蛋白" },
+  { name: "鸭腿", unit: "piece", kcalPerPiece: 330, defaultAmount: 1, category: "优质蛋白" },
+  { name: "牛肉", unit: "g", kcalPer100: 250, category: "优质蛋白" },
+  { name: "米饭", unit: "g", kcalPer100: 116, category: "主食/米面" },
+  { name: "面条", unit: "g", kcalPer100: 137, category: "主食/米面" },
+  { name: "全麦面包", unit: "g", kcalPer100: 247, category: "主食/米面" },
+  { name: "燕麦", unit: "g", kcalPer100: 379, category: "主食/粗粮" },
+  { name: "土豆", unit: "g", kcalPer100: 77, category: "主食/粗粮" },
+  { name: "红薯", unit: "g", kcalPer100: 86, category: "主食/粗粮" },
+  { name: "紫薯", unit: "g", kcalPer100: 82, category: "主食/粗粮" },
+  { name: "玉米", unit: "piece", kcalPerPiece: 175, defaultAmount: 1, category: "主食/粗粮" },
+  { name: "南瓜", unit: "g", kcalPer100: 23, category: "主食/粗粮" },
+  { name: "西红柿", unit: "g", kcalPer100: 18, category: "低卡蔬菜" },
+  { name: "四季豆", unit: "g", kcalPer100: 20, category: "低卡蔬菜" },
+  { name: "菠菜", unit: "g", kcalPer100: 23, category: "低卡蔬菜" },
+  { name: "豆芽", unit: "g", kcalPer100: 30, category: "低卡蔬菜" },
+  { name: "黄瓜", unit: "g", kcalPer100: 16, category: "低卡蔬菜" },
+  { name: "生菜", unit: "g", kcalPer100: 15, category: "低卡蔬菜" },
+  { name: "西兰花", unit: "g", kcalPer100: 34, category: "减脂推荐" },
+  { name: "芦笋", unit: "g", kcalPer100: 20, category: "减脂推荐" },
+  { name: "蘑菇", unit: "g", kcalPer100: 22, category: "减脂推荐" },
+  { name: "魔芋", unit: "g", kcalPer100: 7, category: "减脂推荐" },
+  { name: "胡萝卜", unit: "g", kcalPer100: 41, category: "低卡蔬菜" },
+  { name: "白菜", unit: "g", kcalPer100: 17, category: "低卡蔬菜" },
+  { name: "冬瓜", unit: "g", kcalPer100: 10, category: "低卡蔬菜" },
   { name: "香蕉", unit: "piece", kcalPerPiece: 105, defaultAmount: 1, category: "水果" },
   { name: "苹果", unit: "piece", kcalPerPiece: 95, defaultAmount: 1, category: "水果" },
   { name: "蓝莓", unit: "g", kcalPer100: 57, category: "水果" },
@@ -76,7 +84,6 @@ const elements = {
   kjName: document.querySelector("#kj-name"),
   kjValue: document.querySelector("#kj-value"),
   photoFile: document.querySelector("#photo-file"),
-  photoCameraFile: document.querySelector("#photo-camera-file"),
   photoPreview: document.querySelector("#photo-preview"),
   photoStatus: document.querySelector("#photo-status"),
   identifyPhoto: document.querySelector("#identify-photo"),
@@ -87,6 +94,7 @@ const elements = {
   datalist: document.querySelector("#food-options"),
   quickFoods: document.querySelector("#quick-foods"),
   clearDay: document.querySelector("#clear-day"),
+  mealClearButtons: document.querySelectorAll("[data-clear-meal]"),
   historyList: document.querySelector("#history-list"),
 };
 
@@ -324,6 +332,15 @@ function deleteRecord(id) {
   render();
 }
 
+function clearMeal(meal) {
+  const hasRecords = (state.records[state.date] || []).some((record) => record.meal === meal);
+  if (!hasRecords) return;
+  if (!confirm(`清空${mealNames[meal]}的所有记录？`)) return;
+  state.records[state.date] = (state.records[state.date] || []).filter((record) => record.meal !== meal);
+  saveRecords();
+  render();
+}
+
 function switchMode(mode) {
   state.mode = mode;
   elements.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.mode === mode));
@@ -407,7 +424,7 @@ function addPhotoRecord() {
     type: "photo",
     name,
     kcal,
-    detail: `${grams}g · ${density} kcal/100g · ${elements.photoNote.value.trim() || "拍照估算"}`,
+    detail: `${grams}g · ${density} kcal/100g · ${elements.photoNote.value.trim() || "照片估算"}`,
   });
 
   elements.photoGrams.value = "";
@@ -498,7 +515,7 @@ function resizePhoto(file) {
 }
 
 async function handlePhotoSelected() {
-  const file = elements.photoFile.files?.[0] || elements.photoCameraFile.files?.[0];
+  const file = elements.photoFile.files?.[0];
   if (!file) return;
 
   try {
@@ -515,7 +532,7 @@ async function handlePhotoSelected() {
 
 async function identifyPhoto() {
   if (!photoDataUrl) {
-    setPhotoStatus("请先拍照或选择一张照片。", "warning");
+    setPhotoStatus("请先从相册选择一张照片。", "warning");
     return;
   }
 
@@ -620,7 +637,6 @@ function bindEvents() {
     input.addEventListener("input", updatePreview);
   });
   elements.photoFile.addEventListener("change", handlePhotoSelected);
-  elements.photoCameraFile.addEventListener("change", handlePhotoSelected);
   elements.identifyPhoto.addEventListener("click", identifyPhoto);
   elements.estimateFood.addEventListener("click", estimateFoodByName);
 
@@ -640,6 +656,10 @@ function bindEvents() {
     state.records[state.date] = [];
     saveRecords();
     render();
+  });
+
+  elements.mealClearButtons.forEach((button) => {
+    button.addEventListener("click", () => clearMeal(button.dataset.clearMeal));
   });
 }
 
