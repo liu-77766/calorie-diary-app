@@ -2,38 +2,28 @@
 
 一个手机优先的热量记录 PWA。可以记录早餐、午餐、晚餐、加餐，按食物份量估算热量，也可以直接输入包装上的 kJ 换算成 kcal。
 
-## 手机使用
+## iPhone 使用
 
-当前文件可以直接在电脑浏览器打开预览。要在手机上像 App 一样使用，需要把这个项目发布到 HTTPS 网站上，然后用手机浏览器打开：
+这个项目已经部署成 PWA。iPhone 上请用 Safari 打开：
 
-- Android：用 Chrome 打开后点页面里的“安装”，或浏览器菜单里的“添加到主屏幕”。
-- iPhone：用 Safari 打开后点分享按钮，再选择“添加到主屏幕”。
+https://calorie-diary-app.vercel.app
 
-如果要做成真正的 Android 安装包 APK，需要再接入 Capacitor 或原生 Android 打包工具。
+然后点击分享按钮，选择“添加到主屏幕”。添加后会像普通 App 一样从桌面打开。
 
-## 拍照识别
+如果要做成真正的 App Store 安装包，需要 Apple Developer 账号、Xcode、签名证书和上架流程。当前 PWA 是最轻量、最适合个人使用的方式。
 
-页面已经有拍照/上传照片入口。真实识别需要在 Vercel 项目环境变量里配置 `OPENAI_API_KEY`，可选配置 `OPENAI_MODEL`。没有配置时，拍照识别会提示暂未开通，但手动记录不受影响。
+## 图片识别
 
-也可以改用 Gemini：
+图片识别使用百度图像识别组合接口，包含菜品识别、果蔬/食材识别、通用物体识别和图像主体检测。
 
-- `AI_PROVIDER=gemini`
-- `GEMINI_API_KEY=你的 Gemini API Key`
-- `GEMINI_MODEL=gemini-2.5-flash` 或你账号实际可用的模型名
+百度识别出食物名称后，DeepSeek 会根据名称估算常见可食克数和每 100g 热量。前端会自动填入结果，但重量和热量只是估算，用户可以手动修改。
 
-如果 Google 确认你的账号可用 `gemini-3.1-pro`，可以把 `GEMINI_MODEL` 设置为 `gemini-3.1-pro`。不设置 `AI_PROVIDER` 时默认仍使用 OpenAI。
+## 环境变量
 
-也可以把拍照识别改用百度菜品识别：
+本地 `.env.local` 或 Vercel Environment Variables 需要配置：
 
 - `AI_PROVIDER=baidu`
 - `BAIDU_API_KEY=你的百度 API Key`
 - `BAIDU_SECRET_KEY=你的百度 Secret Key`
-
-百度菜品识别会返回菜品名称、置信度和参考卡路里。这个接口只适合“拍照识别”，不支持按食物名直接查询热量；食物名查询仍需使用内置库、手动输入，或改用 Gemini/OpenAI。
-
-当前项目也支持用 DeepSeek 专门做热量估算：
-
 - `DEEPSEEK_API_KEY=你的 DeepSeek API Key`
 - `DEEPSEEK_MODEL=deepseek-v4-flash`
-
-启用后，输入内置库没有的食物名会调用 DeepSeek 估算热量；百度拍照识别出食物名称后，也会用 DeepSeek 估算/校准常见可食克数和每 100g 热量。

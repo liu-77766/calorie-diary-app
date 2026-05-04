@@ -123,15 +123,15 @@
                 </div>
                 <img id="photo-preview" class="photo-preview hidden" alt="餐食照片预览" />
                 <button id="identify-photo" class="secondary-button" type="button">识别照片</button>
-                <p id="photo-status" class="photo-status">识别会把照片发送到 AI 接口，结果只是估算，请按实际情况修改。</p>
+                <p id="photo-status" class="photo-status">识别会把照片发送到 AI 接口，重量和热量只是估算，可以手动修改。</p>
                 <label>
                   识别食物
                   <input id="photo-food-name" list="food-options" placeholder="识别后自动填写，也可手动修改" autocomplete="off" />
                 </label>
                 <div class="two-col">
                   <label>
-                    估计重量
-                    <input id="photo-grams" type="number" inputmode="decimal" min="0" step="1" placeholder="例如 180" />
+                    AI估算重量，可手动修改
+                    <input id="photo-grams" type="number" inputmode="decimal" min="0" step="1" placeholder="例如 180，可自己改" />
                   </label>
                   <label>
                     单位
