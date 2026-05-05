@@ -445,6 +445,7 @@ function addPhotoRecord() {
   });
 
   elements.photoGrams.value = "";
+  elements.photoNote.value = "";
   elements.photoFoodName.focus();
 }
 

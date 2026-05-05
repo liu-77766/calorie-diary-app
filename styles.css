@@ -117,7 +117,8 @@ h2 {
 
 .date-input,
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
@@ -132,18 +133,27 @@ select {
     background 0.18s ease;
 }
 
+textarea {
+  min-height: 86px;
+  resize: vertical;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
 .date-input {
   width: 150px;
   flex: 0 0 auto;
   box-shadow: var(--shadow-soft);
 }
 
-input::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #9a9489;
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--accent);
   background: white;
   box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.13);
@@ -262,7 +272,11 @@ small {
 }
 
 .compact-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
   margin-bottom: 0;
+  padding: 3px;
+  border-radius: 10px;
 }
 
 .tab,
@@ -273,10 +287,18 @@ small {
   background: transparent;
   color: var(--muted);
   font-weight: 850;
+  line-height: 1.2;
+  white-space: normal;
   transition:
     background 0.18s ease,
     color 0.18s ease,
     box-shadow 0.18s ease;
+}
+
+.energy-tab {
+  min-height: 38px;
+  padding: 8px 6px;
+  font-size: 13px;
 }
 
 .tab.active,
