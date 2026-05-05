@@ -115,12 +115,14 @@ async function recognizeWithMimo(image) {
   }
 
   const prompt = [
-    "请识别图片里的主要食物，并估算常见可食重量克数和每100克热量。",
-    "如果图片里有多个食物，只返回最主要、最容易记录的一个。",
-    "请直接根据图片中的份量、盘子/包装比例、食物外观估算 estimatedGrams；无法精确称重时给最合理的视觉估算，不要固定返回100。",
-    "不要夸大准确性，note 里说明这是视觉估算。",
+    "请把图片当作一整份餐食来识别和估算，不要只返回最显眼的单个食物。",
+    "如果图片里有多个食物，请分别观察米饭、主菜、配菜、汤汁/油脂等可见部分，估算整盘可食总重量 estimatedGrams 和整盘总热量。",
+    "kcalPer100 请返回整盘混合后的平均每100克热量，公式是：整盘总热量 / estimatedGrams * 100。",
+    "foodName 请概括为整份餐食，例如：米饭配鸭腿和炒青菜豆芽。",
+    "note 里请用简短中文列出主要组成和大致克数/热量拆分，并说明这是视觉估算。",
+    "无法精确称重时给最合理的视觉估算，不要固定返回100。",
     "只返回 JSON，不要返回 Markdown。",
-    'JSON 字段必须是：{"foodName":"食物名","estimatedGrams":0,"kcalPer100":0,"confidence":0.5,"note":"简短说明"}',
+    'JSON 字段必须是：{"foodName":"整份餐食名","estimatedGrams":0,"kcalPer100":0,"confidence":0.5,"note":"组成拆分和估算说明"}',
   ].join("\n");
 
   const parsed = await callMimoJson(
