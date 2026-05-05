@@ -19,7 +19,7 @@ function providerName() {
 function mimoConfig() {
   return {
     apiKey: process.env.MIMO_API_KEY,
-    baseUrl: process.env.MIMO_BASE_URL || "https://api.xiaomimimo.com/v1",
+    baseUrl: process.env.MIMO_BASE_URL || "https://token-plan-sgp.xiaomimimo.com/v1",
     model: process.env.MIMO_MODEL || "mimo-v2.5",
   };
 }
@@ -117,7 +117,8 @@ async function recognizeWithMimo(image) {
   const prompt = [
     "请识别图片里的主要食物，并估算常见可食重量克数和每100克热量。",
     "如果图片里有多个食物，只返回最主要、最容易记录的一个。",
-    "无法精确称重时给常见估算，不要夸大准确性。",
+    "请直接根据图片中的份量、盘子/包装比例、食物外观估算 estimatedGrams；无法精确称重时给最合理的视觉估算，不要固定返回100。",
+    "不要夸大准确性，note 里说明这是视觉估算。",
     "只返回 JSON，不要返回 Markdown。",
     'JSON 字段必须是：{"foodName":"食物名","estimatedGrams":0,"kcalPer100":0,"confidence":0.5,"note":"简短说明"}',
   ].join("\n");

@@ -104,13 +104,21 @@
               </div>
 
               <div id="kj-fields" class="mode-fields hidden">
+                <div class="tabs compact-tabs" role="tablist" aria-label="包装热量单位">
+                  <button class="energy-tab active" type="button" data-energy-mode="kj">按 kJ/100g</button>
+                  <button class="energy-tab" type="button" data-energy-mode="kcal">直接 kcal/100g</button>
+                </div>
                 <label>
                   名称
                   <input id="kj-name" placeholder="薯片、巧克力、饮料" autocomplete="off" />
                 </label>
                 <label>
-                  包装标注能量
-                  <input id="kj-value" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例如 840" />
+                  包装标注热量（每100g）
+                  <input id="kj-value" type="number" inputmode="decimal" min="0" step="0.1" placeholder="例如 840 kJ，或 200 kcal" />
+                </label>
+                <label>
+                  吃了多少克
+                  <input id="kj-grams" type="number" inputmode="decimal" min="0" step="1" placeholder="例如 35" />
                 </label>
               </div>
 

@@ -22,7 +22,7 @@ function foodEstimatePrompt(name) {
 function mimoConfig() {
   return {
     apiKey: process.env.MIMO_API_KEY,
-    baseUrl: process.env.MIMO_BASE_URL || "https://api.xiaomimimo.com/v1",
+    baseUrl: process.env.MIMO_BASE_URL || "https://token-plan-sgp.xiaomimimo.com/v1",
     model: process.env.MIMO_MODEL || "mimo-v2.5",
   };
 }

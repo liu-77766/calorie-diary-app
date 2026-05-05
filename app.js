@@ -83,6 +83,8 @@ const elements = {
   estimateStatus: document.querySelector("#estimate-status"),
   kjName: document.querySelector("#kj-name"),
   kjValue: document.querySelector("#kj-value"),
+  kjGrams: document.querySelector("#kj-grams"),
+  energyTabs: document.querySelectorAll(".energy-tab"),
   photoFile: document.querySelector("#photo-file"),
   photoPreview: document.querySelector("#photo-preview"),
   photoStatus: document.querySelector("#photo-status"),
@@ -99,6 +101,7 @@ const elements = {
 };
 
 let photoDataUrl = "";
+let energyMode = "kj";
 
 function todayKey() {
   const now = new Date();
@@ -184,9 +187,11 @@ function estimateFoodKcal() {
 }
 
 function estimateKjKcal() {
-  const kj = Number(elements.kjValue.value);
-  if (!kj) return 0;
-  return roundKcal(kj * KCAL_PER_KJ);
+  const valuePer100 = Number(elements.kjValue.value);
+  const grams = Number(elements.kjGrams.value);
+  if (!valuePer100 || !grams) return 0;
+  const kcalPer100 = energyMode === "kj" ? valuePer100 * KCAL_PER_KJ : valuePer100;
+  return roundKcal((grams * kcalPer100) / 100);
 }
 
 function estimatePhotoKcal() {
@@ -350,6 +355,13 @@ function switchMode(mode) {
   updatePreview();
 }
 
+function switchEnergyMode(mode) {
+  energyMode = mode;
+  elements.energyTabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.energyMode === mode));
+  elements.kjValue.placeholder = mode === "kj" ? "例如 840 kJ" : "例如 200 kcal";
+  updatePreview();
+}
+
 function syncFoodDensity() {
   const food = findFood(elements.foodName.value);
   if (!food) return;
@@ -393,21 +405,26 @@ function addFoodRecord() {
 
 function addKjRecord() {
   const name = elements.kjName.value.trim() || "包装食品";
-  const kj = Number(elements.kjValue.value);
+  const valuePer100 = Number(elements.kjValue.value);
+  const grams = Number(elements.kjGrams.value);
   const kcal = estimateKjKcal();
 
-  if (!kj || !kcal) return;
+  if (!valuePer100 || !grams || !kcal) return;
 
   addRecord({
     meal: elements.meal.value,
     type: "kj",
     name,
     kcal,
-    detail: `${kj} kJ · 按 1 kcal = 4.184 kJ`,
+    detail:
+      energyMode === "kj"
+        ? `${grams}g · ${valuePer100} kJ/100g · 按 1 kcal = 4.184 kJ`
+        : `${grams}g · ${valuePer100} kcal/100g`,
   });
 
   elements.kjName.value = "";
   elements.kjValue.value = "";
+  elements.kjGrams.value = "";
   elements.kjName.focus();
 }
 
@@ -627,13 +644,17 @@ function bindEvents() {
     tab.addEventListener("click", () => switchMode(tab.dataset.mode));
   });
 
+  elements.energyTabs.forEach((tab) => {
+    tab.addEventListener("click", () => switchEnergyMode(tab.dataset.energyMode));
+  });
+
   elements.date.addEventListener("change", () => {
     switchDate(elements.date.value, "details");
   });
 
   elements.foodName.addEventListener("input", syncFoodDensity);
   elements.photoFoodName.addEventListener("input", syncPhotoDensity);
-  [elements.foodAmount, elements.density, elements.kjValue, elements.photoGrams, elements.photoDensity].forEach((input) => {
+  [elements.foodAmount, elements.density, elements.kjValue, elements.kjGrams, elements.photoGrams, elements.photoDensity].forEach((input) => {
     input.addEventListener("input", updatePreview);
   });
   elements.photoFile.addEventListener("change", handlePhotoSelected);

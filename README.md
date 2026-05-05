@@ -29,5 +29,7 @@ https://calorie-diary-app.vercel.app
 - `DEEPSEEK_API_KEY=你的 DeepSeek API Key`
 - `DEEPSEEK_MODEL=deepseek-v4-flash`
 - `MIMO_API_KEY=你的小米 MiMo API Key`
-- `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`
+- `MIMO_BASE_URL=https://token-plan-sgp.xiaomimimo.com/v1`
 - `MIMO_MODEL=mimo-v2.5`
+
+如果使用小米 token plan 套餐，必须配置专属 `MIMO_API_KEY` 和专属 `MIMO_BASE_URL`，否则可能无法访问套餐模型，或消耗普通账户余额。
