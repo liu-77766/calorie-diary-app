@@ -22,8 +22,12 @@ https://calorie-diary-app.vercel.app
 
 本地 `.env.local` 或 Vercel Environment Variables 需要配置：
 
-- `AI_PROVIDER=baidu`
+- `AI_PROVIDER=mimo` 使用小米 MiMo-V2.5
+- `AI_PROVIDER=baidu` 回退到百度识图 + DeepSeek 估算
 - `BAIDU_API_KEY=你的百度 API Key`
 - `BAIDU_SECRET_KEY=你的百度 Secret Key`
 - `DEEPSEEK_API_KEY=你的 DeepSeek API Key`
 - `DEEPSEEK_MODEL=deepseek-v4-flash`
+- `MIMO_API_KEY=你的小米 MiMo API Key`
+- `MIMO_BASE_URL=https://api.xiaomimimo.com/v1`
+- `MIMO_MODEL=mimo-v2.5`

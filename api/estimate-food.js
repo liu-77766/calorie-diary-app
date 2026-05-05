@@ -4,20 +4,8 @@ function parseJsonText(text) {
   return JSON.parse(fenced ? fenced[1] : trimmed);
 }
 
-function readOpenAIText(responseBody) {
-  if (responseBody.output_text) return responseBody.output_text;
-
-  const message = responseBody.output?.find((item) => item.type === "message");
-  const text = message?.content?.find((item) => item.type === "output_text");
-  return text?.text || "";
-}
-
-function readGeminiText(responseBody) {
-  return responseBody.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || "";
-}
-
 function providerName() {
-  return (process.env.AI_PROVIDER || "openai").toLowerCase();
+  return (process.env.AI_PROVIDER || "baidu").toLowerCase();
 }
 
 function foodEstimatePrompt(name) {
@@ -31,37 +19,41 @@ function foodEstimatePrompt(name) {
   ].join("\n");
 }
 
-async function estimateWithGemini(name) {
-  if (!process.env.GEMINI_API_KEY) {
-    return { status: 503, body: { error: "热量查询还没有配置 GEMINI_API_KEY。可以先用内置食物或手动输入热量。" } };
+function mimoConfig() {
+  return {
+    apiKey: process.env.MIMO_API_KEY,
+    baseUrl: process.env.MIMO_BASE_URL || "https://api.xiaomimimo.com/v1",
+    model: process.env.MIMO_MODEL || "mimo-v2.5",
+  };
+}
+
+async function estimateWithMimo(name) {
+  const { apiKey, baseUrl, model } = mimoConfig();
+  if (!apiKey) {
+    return { status: 503, body: { error: "热量查询还没有配置 MIMO_API_KEY。" } };
   }
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+  const response = await fetch(`${baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
-      "x-goog-api-key": process.env.GEMINI_API_KEY,
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: foodEstimatePrompt(name) }],
-        },
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
+      model,
+      messages: [{ role: "user", content: foodEstimatePrompt(name) }],
+      response_format: { type: "json_object" },
+      temperature: 0.2,
+      max_tokens: 512,
     }),
   });
 
   const body = await response.json();
   if (!response.ok) {
-    return { status: response.status, body: { error: body.error?.message || "Gemini 热量查询暂时不可用" } };
+    return { status: response.status, body: { error: body.error?.message || "小米 MiMo 热量查询暂时不可用" } };
   }
 
-  return { status: 200, body: parseJsonText(readGeminiText(body)) };
+  return { status: 200, body: parseJsonText(body.choices?.[0]?.message?.content) };
 }
 
 async function estimateWithDeepSeek(name) {
@@ -77,12 +69,7 @@ async function estimateWithDeepSeek(name) {
     },
     body: JSON.stringify({
       model: process.env.DEEPSEEK_MODEL || "deepseek-v4-flash",
-      messages: [
-        {
-          role: "user",
-          content: foodEstimatePrompt(name),
-        },
-      ],
+      messages: [{ role: "user", content: foodEstimatePrompt(name) }],
       response_format: { type: "json_object" },
       temperature: 0.2,
     }),
@@ -94,56 +81,6 @@ async function estimateWithDeepSeek(name) {
   }
 
   return { status: 200, body: parseJsonText(body.choices?.[0]?.message?.content) };
-}
-
-async function estimateWithOpenAI(name) {
-  if (!process.env.OPENAI_API_KEY) {
-    return { status: 503, body: { error: "热量查询还没有配置 OPENAI_API_KEY。可以先用内置食物或手动输入热量。" } };
-  }
-
-  const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      input: [
-        {
-          role: "user",
-          content: [{ type: "input_text", text: foodEstimatePrompt(name) }],
-        },
-      ],
-      text: {
-        format: {
-          type: "json_schema",
-          name: "food_calorie_estimate",
-          strict: true,
-          schema: {
-            type: "object",
-            additionalProperties: false,
-            required: ["name", "unit", "kcalPer100", "kcalPerPiece", "defaultAmount", "note"],
-            properties: {
-              name: { type: "string" },
-              unit: { type: "string", enum: ["g", "ml", "piece"] },
-              kcalPer100: { type: "number" },
-              kcalPerPiece: { type: "number" },
-              defaultAmount: { type: "number" },
-              note: { type: "string" },
-            },
-          },
-        },
-      },
-    }),
-  });
-
-  const body = await response.json();
-  if (!response.ok) {
-    return { status: response.status, body: { error: body.error?.message || "AI 热量查询暂时不可用" } };
-  }
-
-  return { status: 200, body: parseJsonText(readOpenAIText(body)) };
 }
 
 module.exports = async function handler(req, res) {
@@ -172,17 +109,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const provider = providerName();
-    if (process.env.DEEPSEEK_API_KEY) {
-      const result = await estimateWithDeepSeek(name);
-      return res.status(result.status).json(result.body);
-    }
-    if (provider === "baidu") {
-      return res.status(501).json({
-        error: "百度菜品识别只支持拍照识别，不能按食物名查询热量。请配置 DEEPSEEK_API_KEY 后再查询。",
-      });
-    }
-    const result = provider === "gemini" ? await estimateWithGemini(name) : await estimateWithOpenAI(name);
+    const result = providerName() === "mimo" ? await estimateWithMimo(name) : await estimateWithDeepSeek(name);
     return res.status(result.status).json(result.body);
   } catch {
     return res.status(502).json({ error: "AI 返回格式无法解析，请手动输入" });

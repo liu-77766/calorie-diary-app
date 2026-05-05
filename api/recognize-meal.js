@@ -12,6 +12,47 @@ function parseJsonText(text) {
   return JSON.parse(fenced ? fenced[1] : trimmed);
 }
 
+function providerName() {
+  return (process.env.AI_PROVIDER || "baidu").toLowerCase();
+}
+
+function mimoConfig() {
+  return {
+    apiKey: process.env.MIMO_API_KEY,
+    baseUrl: process.env.MIMO_BASE_URL || "https://api.xiaomimimo.com/v1",
+    model: process.env.MIMO_MODEL || "mimo-v2.5",
+  };
+}
+
+async function callMimoJson(messages, maxTokens = 512) {
+  const { apiKey, baseUrl, model } = mimoConfig();
+  if (!apiKey) {
+    throw new Error("还没有配置 MIMO_API_KEY。");
+  }
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      max_tokens: maxTokens,
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+    }),
+  });
+
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error?.message || "小米 MiMo 暂时不可用");
+  }
+
+  return parseJsonText(body.choices?.[0]?.message?.content);
+}
+
 async function estimateCaloriesWithDeepSeek(foodName) {
   if (!process.env.DEEPSEEK_API_KEY || !foodName || foodName === "图像主体") return null;
 
@@ -67,6 +108,45 @@ async function enrichCaloriesWithDeepSeek(result) {
   };
 }
 
+async function recognizeWithMimo(image) {
+  const parsedImage = parseDataUrl(image);
+  if (!parsedImage) {
+    return { status: 400, body: { error: "请上传有效的餐食照片" } };
+  }
+
+  const prompt = [
+    "请识别图片里的主要食物，并估算常见可食重量克数和每100克热量。",
+    "如果图片里有多个食物，只返回最主要、最容易记录的一个。",
+    "无法精确称重时给常见估算，不要夸大准确性。",
+    "只返回 JSON，不要返回 Markdown。",
+    'JSON 字段必须是：{"foodName":"食物名","estimatedGrams":0,"kcalPer100":0,"confidence":0.5,"note":"简短说明"}',
+  ].join("\n");
+
+  const parsed = await callMimoJson(
+    [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          { type: "image_url", image_url: { url: image } },
+        ],
+      },
+    ],
+    600,
+  );
+
+  return {
+    status: 200,
+    body: {
+      foodName: parsed.foodName || "未知食物",
+      estimatedGrams: Number(parsed.estimatedGrams) || 100,
+      kcalPer100: Number(parsed.kcalPer100) || 0,
+      confidence: Number(parsed.confidence) || 0,
+      note: parsed.note || "小米 MiMo 估算结果，请按实际情况调整。",
+    },
+  };
+}
+
 async function getBaiduAccessToken() {
   const apiKey = process.env.BAIDU_API_KEY;
   const secretKey = process.env.BAIDU_SECRET_KEY;
@@ -87,27 +167,6 @@ async function getBaiduAccessToken() {
     throw new Error(body.error_description || body.error || "百度 access_token 获取失败");
   }
   return body.access_token;
-}
-
-function normalizeBaiduDishResult(body) {
-  if (body.error_code) {
-    throw new Error(body.error_msg || "百度菜品识别失败");
-  }
-
-  const dish = body.result?.[0];
-  if (!dish) {
-    throw new Error("百度没有识别到明确菜品，请手动输入");
-  }
-
-  const calorie = Number(dish.calorie) || 0;
-  const confidence = Number(dish.probability || dish.score || 0);
-  return {
-    foodName: dish.name || "未知菜品",
-    estimatedGrams: 100,
-    kcalPer100: calorie,
-    confidence,
-    note: "百度菜品识别返回的卡路里通常按每100克估算，请按实际重量调整。",
-  };
 }
 
 function pickFirstResult(items = []) {
@@ -237,9 +296,9 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const result = await recognizeWithBaidu(image);
+    const result = providerName() === "mimo" ? await recognizeWithMimo(image) : await recognizeWithBaidu(image);
     return res.status(result.status).json(result.body);
   } catch (error) {
-    return res.status(502).json({ error: error.message || "百度识别失败，请手动输入" });
+    return res.status(502).json({ error: error.message || "识别失败，请手动输入" });
   }
 };
